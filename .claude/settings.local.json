@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where pdftotext *)",
+      "Bash(pip --version)",
+      "PowerShell(python --version)",
+      "PowerShell(pip --version)",
+      "Bash(pdftotext -layout -l 3 \"[사업] 매장 관리 매뉴얼.pdf\" -)",
+      "Bash(pdftotext -layout -enc UTF-8 -f 5 -l 7 \"[사업] 매장 관리 매뉴얼.pdf\" -)",
+      "Bash(pdftotext -layout -enc UTF-8 \"[사업] 매장 관리 매뉴얼.pdf\" manual.txt)",
+      "Bash(pdfinfo \"[사업] 매장 관리 매뉴얼.pdf\")",
+      "Bash(pdftotext -layout -enc UTF-8 -f 26 -l 100 \"[사업] 매장 관리 매뉴얼.pdf\" -)",
+      "Bash(pdftotext -layout -enc UTF-8 -f 27 -l 200 \"[사업] 매장 관리 매뉴얼.pdf\" page27plus.txt)",
+      "Bash(where pdfimages *)",
+      "Bash(pdftotext -layout -enc UTF-8 -bbox \"[사업] 매장 관리 매뉴얼.pdf\" -)",
+      "Bash(pdftotext -layout -enc UTF-8 \"[사업] 매장 관리 매뉴얼.pdf\" -)",
+      "Read(//tmp/**)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(command -v py python python3 node npx)",
+      "Bash(py --version)",
+      "PowerShell($pdf = \"C:\\\\Users\\\\user\\\\OneDrive\\\\바탕 화면\\\\매뉴얼 검색기\\\\[사업] 매장 관리 매뉴얼.pdf\"; $info = Get-Item -LiteralPath $pdf; \"Size: $\\([math]::Round\\($info.Length/1MB, 1\\)\\) MB\"; \"LastWriteTime: $\\($info.LastWriteTime\\)\"; \"CreationTime: $\\($info.CreationTime\\)\"; \"---\"; \"Available extractors:\"; foreach \\($cmd in @\\('pdftotext','gswin64c','gswin32c','gs','pdf2txt'\\)\\) { $g = Get-Command $cmd -ErrorAction SilentlyContinue; if \\($g\\) { \"$cmd : $\\($g.Source\\)\" } else { \"$cmd : \\(not found\\)\" } })",
+      "Bash(\"/c/Program Files/Git/mingw64/bin/pdftotext.exe\" \"[사업] 매장 관리 매뉴얼.pdf\" /tmp/pdf_full.txt)",
+      "Bash(grep -o '^[0-9]\\\\{3\\\\}$' /tmp/pdf_full.txt)",
+      "Bash(\"/c/Program Files/Git/mingw64/bin/pdftotext.exe\" -layout \"[사업] 매장 관리 매뉴얼.pdf\" /tmp/pdf_new.txt)",
+      "Bash(command -v pdftoppm)",
+      "Read(//c/Program Files/Git/mingw64/bin//**)"
+    ]
+  }
+}

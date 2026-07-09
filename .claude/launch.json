@@ -1,0 +1,15 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "manual",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": [
+        "-NoProfile",
+        "-Command",
+        "$l = New-Object System.Net.HttpListener; $l.Prefixes.Add('http://localhost:5173/'); $l.Start(); Write-Host 'Listening on http://localhost:5173/'; while ($l.IsListening) { $ctx = $l.GetContext(); $req = $ctx.Request; $resp = $ctx.Response; $rel = [Uri]::UnescapeDataString($req.Url.AbsolutePath).TrimStart('/'); if ($rel -eq '' -or $rel -eq '/') { $rel = 'index.html' }; $path = Join-Path (Get-Location) $rel; if (Test-Path -LiteralPath $path -PathType Leaf) { $ext = [System.IO.Path]::GetExtension($path).ToLower(); $mime = switch ($ext) { '.html' { 'text/html; charset=utf-8' } '.js' { 'application/javascript; charset=utf-8' } '.css' { 'text/css; charset=utf-8' } '.pdf' { 'application/pdf' } '.jpg' { 'image/jpeg' } '.png' { 'image/png' } '.json' { 'application/json; charset=utf-8' } default { 'application/octet-stream' } }; $bytes = [System.IO.File]::ReadAllBytes($path); $resp.ContentType = $mime; $resp.ContentLength64 = $bytes.Length; $resp.OutputStream.Write($bytes, 0, $bytes.Length) } else { $resp.StatusCode = 404; $msg = [System.Text.Encoding]::UTF8.GetBytes('Not Found: ' + $rel); $resp.OutputStream.Write($msg, 0, $msg.Length) }; $resp.Close() }"
+      ],
+      "port": 5173
+    }
+  ]
+}

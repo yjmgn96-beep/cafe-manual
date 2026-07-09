@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>사내카페 매뉴얼</title>
+  <style>
+    :root {
+      --kakao-bg: #b2c7d9;
+      --kakao-yellow: #fae100;
+      --kakao-yellow-deep: #f6d800;
+      --bubble-white: #ffffff;
+      --text-dark: #1a1a1a;
+      --text-mute: #6b7280;
+      --header-bg: #ffffff;
+      --header-border: #e5e7eb;
+      --input-bg: #ffffff;
+      --input-border: #d1d5db;
+      --card-border: #e5e7eb;
+      --card-hover: #f7f9fc;
+      --mark: #fff3a3;
+      --accent: #2563eb;
+      --accent-soft: #eef3ff;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body {
+      font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+                   "Malgun Gothic", "맑은 고딕", "Segoe UI", sans-serif;
+      background: #e9ebef;
+      color: var(--text-dark);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overscroll-behavior-y: contain;
+    }
+
+    /* ───── App frame (휴대폰 느낌으로 가운데 정렬) ───── */
+    .app {
+      display: flex; flex-direction: column;
+      max-width: 520px;
+      height: 100vh;
+      margin: 0 auto;
+      background: var(--kakao-bg);
+      box-shadow: 0 0 24px rgba(0,0,0,.06);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ───── Header ───── */
+    .header {
+      flex: 0 0 auto;
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px;
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--header-border);
+      position: relative;
+      z-index: 2;
+    }
+    .header .back {
+      width: 32px; height: 32px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border: none; background: transparent; color: #444;
+      font-size: 22px; cursor: pointer; padding: 0;
+    }
+    .header .title-box { flex: 1; min-width: 0; }
+    .header .title {
+      font-size: 16px; font-weight: 700; color: #1a1a1a;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .header .subtitle {
+      font-size: 11.5px; color: var(--text-mute); margin-top: 1px;
+    }
+    .header .icon {
+      width: 32px; height: 32px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #777; font-size: 18px;
+    }
+
+    /* ───── Chat scroll area ───── */
+    .chat {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      padding: 14px 12px 16px;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+    }
+    .chat::-webkit-scrollbar { width: 6px; }
+    .chat::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 4px; }
+
+    /* 날짜 구분선 */
+    .date-divider {
+      text-align: center; margin: 4px 0 12px;
+    }
+    .date-divider span {
+      font-size: 11.5px; color: #fff;
+      background: rgba(0,0,0,.18);
+      padding: 4px 12px; border-radius: 999px;
+      display: inline-block;
+    }
+
+    /* ───── 메시지 공통 ───── */
+    .msg-row {
+      display: flex; align-items: flex-end; gap: 6px;
+      margin-bottom: 10px;
+      animation: pop .18s ease-out;
+    }
+    @keyframes pop {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .msg-row.bot { justify-content: flex-start; }
+    .msg-row.user { justify-content: flex-end; }
+
+    .avatar {
+      width: 36px; height: 36px; border-radius: 14px;
+      background: var(--kakao-yellow);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 19px; flex: 0 0 36px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.08);
+    }
+    .avatar.spacer { background: transparent; box-shadow: none; }
+
+    .bubble-wrap {
+      max-width: 75%;
+      display: flex; flex-direction: column;
+      gap: 4px; min-width: 0;
+    }
+    .msg-row.user .bubble-wrap { align-items: flex-end; }
+    .sender {
+      font-size: 12px; color: #2a2a2a;
+      margin: 0 4px 2px;
+    }
+
+    .bubble-line {
+      display: flex; align-items: flex-end; gap: 6px;
+    }
+    .msg-row.user .bubble-line { flex-direction: row-reverse; }
+
+    .bubble {
+      padding: 9px 12px;
+      border-radius: 14px;
+      font-size: 14.5px;
+      line-height: 1.55;
+      word-break: break-word;
+      white-space: pre-wrap;
+      box-shadow: 0 1px 1px rgba(0,0,0,.04);
+    }
+    .msg-row.bot .bubble {
+      background: var(--bubble-white);
+      border-top-left-radius: 4px;
+      color: var(--text-dark);
+    }
+    .msg-row.user .bubble {
+      background: var(--kakao-yellow);
+      border-top-right-radius: 4px;
+      color: #1a1a1a;
+    }
+    .time {
+      font-size: 10.5px; color: #4a4a4a;
+      margin-bottom: 2px;
+      flex: 0 0 auto;
+    }
+
+    /* ───── 추천 키워드 칩 (말풍선 안) ───── */
+    .chips {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-top: 8px;
+    }
+    .chip {
+      font-size: 13px; padding: 6px 12px;
+      background: #fff8c2;
+      border: 1px solid #f0d800;
+      color: #5a4a00;
+      border-radius: 999px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .12s;
+    }
+    .chip:hover, .chip:active { background: #fff3a3; }
+
+    /* ───── 결과 카드 ───── */
+    .results {
+      display: flex; flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .result-card {
+      background: #fff;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+      transition: background .12s, border-color .12s, transform .08s;
+    }
+    .result-card:hover { background: var(--card-hover); border-color: #c9d0db; }
+    .result-card:active { transform: scale(.99); }
+    .result-card .rc-chapter {
+      font-size: 11px; color: var(--text-mute); margin-bottom: 2px;
+      letter-spacing: .01em;
+    }
+    .result-card .rc-title-row {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+    }
+    .result-card .rc-title {
+      font-size: 14.5px; font-weight: 600; color: #1a1a1a;
+    }
+    .result-card .rc-page {
+      font-size: 11px; color: var(--text-mute); white-space: nowrap;
+    }
+    .result-card .rc-summary {
+      font-size: 12.5px; color: #4a4d54;
+      margin-top: 4px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* ───── 상세 본문 메시지 ───── */
+    .detail-bubble {
+      padding: 14px 14px 12px;
+      max-width: 100%;
+    }
+    .detail-bubble .d-chapter {
+      font-size: 11.5px; color: var(--text-mute);
+    }
+    .detail-bubble .d-title {
+      font-size: 17px; font-weight: 700; margin: 2px 0 6px; color: #1a1a1a;
+    }
+    .detail-bubble .d-meta {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .detail-bubble .d-page {
+      font-size: 11.5px; padding: 3px 9px;
+      background: #f0f2f5; color: #4a4d54;
+      border-radius: 999px;
+    }
+    .detail-bubble .d-pdf {
+      font-size: 12px; padding: 5px 11px;
+      background: var(--accent); color: #fff;
+      border-radius: 999px;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .detail-bubble .d-summary {
+      background: var(--accent-soft);
+      color: #1a2750;
+      padding: 9px 11px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+    .detail-bubble .d-pages {
+      display: flex; flex-direction: column; gap: 8px;
+      margin-bottom: 10px;
+    }
+    .detail-bubble .d-pages img {
+      width: 100%; display: block;
+      border: 1px solid #e5e7eb; border-radius: 8px;
+    }
+    .detail-bubble .d-body {
+      background: #fafbfc;
+      border: 1px solid #eceef2;
+      border-radius: 8px;
+      padding: 10px 12px;
+      overflow-x: auto;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    .detail-bubble .d-body pre {
+      margin: 0;
+      font-family: "D2Coding", "Consolas", "Menlo", monospace;
+      font-size: 12.5px;
+      line-height: 1.7;
+      white-space: pre;
+      color: #2a2d33;
+    }
+    .detail-bubble .d-hint {
+      margin-top: 10px;
+      font-size: 12px; color: var(--text-mute);
+    }
+
+    /* 빈 결과 박스 */
+    .empty-result {
+      font-size: 13.5px; color: #444;
+    }
+    .empty-result .hint {
+      display: block; margin-top: 6px; color: var(--text-mute); font-size: 12.5px;
+    }
+
+    mark { background: var(--mark); padding: 0 1px; border-radius: 2px; }
+
+    /* ───── Input bar ───── */
+    .input-bar {
+      flex: 0 0 auto;
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px calc(8px + var(--safe-bottom));
+      background: #f4f5f7;
+      border-top: 1px solid var(--header-border);
+    }
+    .input-bar .plus {
+      width: 32px; height: 32px; border: none; background: transparent;
+      color: #6b7280; font-size: 22px; line-height: 1; cursor: pointer;
+      flex: 0 0 32px;
+    }
+    .input-bar input {
+      flex: 1; min-width: 0;
+      padding: 9px 14px;
+      font-size: 15px;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 999px;
+      outline: none;
+      font-family: inherit;
+    }
+    .input-bar input:focus { border-color: #9aa3af; }
+    .input-bar .send {
+      padding: 7px 14px;
+      font-size: 14px; font-weight: 600;
+      color: #1a1a1a;
+      background: var(--kakao-yellow);
+      border: none; border-radius: 999px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .12s;
+    }
+    .input-bar .send:hover { background: var(--kakao-yellow-deep); }
+    .input-bar .send:disabled {
+      background: #e3e5ea; color: #9aa0a6; cursor: not-allowed;
+    }
+
+    /* ───── 데스크톱에서 살짝 더 넓게 ───── */
+    @media (min-width: 720px) {
+      .app { max-width: 640px; height: calc(100vh - 24px); margin: 12px auto; border-radius: 14px; }
+    }
+    @media (max-width: 380px) {
+      .bubble-wrap { max-width: 82%; }
+      .header .title { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" role="application" aria-label="사내카페 매뉴얼 채팅">
+    <!-- Header -->
+    <header class="header">
+      <button class="back" onclick="resetChat()" aria-label="새로 시작">‹</button>
+      <div class="title-box">
+        <div class="title" id="headerTitle">사내카페 매뉴얼</div>
+        <div class="subtitle" id="headerSub">키워드로 검색해보세요</div>
+      </div>
+      <span class="icon" aria-hidden="true">☰</span>
+    </header>
+
+    <!-- Chat -->
+    <main class="chat" id="chat" aria-live="polite"></main>
+
+    <!-- Input -->
+    <form class="input-bar" id="form" autocomplete="off">
+      <button type="button" class="plus" aria-label="추가" tabindex="-1">+</button>
+      <input id="q" type="text" placeholder="검색어를 입력하세요 (예: 머신)" aria-label="검색어">
+      <button type="submit" class="send" id="sendBtn">전송</button>
+    </form>
+  </div>
+
+  <script src="data.js"></script>
+  <script>
+  (function () {
+    const data = window.MANUAL_DATA;
+    if (!data || !Array.isArray(data.sections)) {
+      document.getElementById('chat').innerHTML =
+        '<div class="msg-row bot"><div class="bubble">매뉴얼 데이터(data.js)를 불러올 수 없습니다.</div></div>';
+      return;
+    }
+
+    const $ = (sel, root = document) => root.querySelector(sel);
+    const chatEl = $('#chat');
+    const qEl = $('#q');
+    const formEl = $('#form');
+    const sendBtn = $('#sendBtn');
+
+    document.getElementById('headerTitle').textContent = '사내카페 매뉴얼';
+    document.getElementById('headerSub').textContent = `매뉴얼 ${data.sections.length}개 · 키워드로 검색`;
+
+    // ───── 유틸 ─────
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]));
+
+    const highlight = (text, query) => {
+      const e = esc(text);
+      if (!query) return e;
+      const pat = query.trim().split(/\s+/).filter(Boolean)
+        .map(q => q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+        .join('|');
+      if (!pat) return e;
+      return e.replace(new RegExp(`(${pat})`, 'gi'), '<mark>$1</mark>');
+    };
+
+    const pageStr = (s) => s.page === s.pageEnd ? `p.${s.page}` : `p.${s.page}~${s.pageEnd}`;
+
+    const nowTime = () => {
+      const d = new Date();
+      const h = d.getHours();
+      const m = String(d.getMinutes()).padStart(2, '0');
+      const ampm = h < 12 ? '오전' : '오후';
+      const h12 = h % 12 === 0 ? 12 : h % 12;
+      return `${ampm} ${h12}:${m}`;
+    };
+
+    const scrollToBottom = () => {
+      requestAnimationFrame(() => {
+        chatEl.scrollTop = chatEl.scrollHeight;
+      });
+    };
+
+    // ───── 검색 ─────
+    const filterSections = (query) => {
+      const q = query.trim().toLowerCase();
+      if (!q) return [];
+      const tokens = q.split(/\s+/).filter(Boolean);
+      return data.sections.filter(s => {
+        const hay = (s.title + '\n' + s.summary + '\n' + s.body + '\n' + s.chapter).toLowerCase();
+        return tokens.every(t => hay.includes(t));
+      });
+    };
+
+    // ───── 메시지 추가 ─────
+    const addBotMessage = (innerHTML, opts = {}) => {
+      const row = document.createElement('div');
+      row.className = 'msg-row bot';
+      const showAvatar = opts.showAvatar !== false;
+      const showSender = opts.showSender !== false;
+
+      row.innerHTML = `
+        <div class="avatar${showAvatar ? '' : ' spacer'}" aria-hidden="true">${showAvatar ? '☕' : ''}</div>
+        <div class="bubble-wrap">
+          ${showSender ? '<div class="sender">사내카페 매뉴얼봇</div>' : ''}
+          <div class="bubble-line">
+            <div class="bubble">${innerHTML}</div>
+            <div class="time">${nowTime()}</div>
+          </div>
+        </div>
+      `;
+      chatEl.appendChild(row);
+      scrollToBottom();
+      return row;
+    };
+
+    const addUserMessage = (text) => {
+      const row = document.createElement('div');
+      row.className = 'msg-row user';
+      row.innerHTML = `
+        <div class="bubble-wrap">
+          <div class="bubble-line">
+            <div class="time">${nowTime()}</div>
+            <div class="bubble">${esc(text)}</div>
+          </div>
+        </div>
+      `;
+      chatEl.appendChild(row);
+      scrollToBottom();
+    };
+
+    // ───── 결과/본문 렌더링 ─────
+    const renderSearch = (query) => {
+      const results = filterSections(query);
+
+      if (results.length === 0) {
+        addBotMessage(
+          `<div class="empty-result">
+            <b>"${esc(query)}"</b>에 해당하는 매뉴얼이 없어요.
+            <span class="hint">다른 키워드로 검색해보세요. 예: 머신, 세제, 행주, 그라인더</span>
+          </div>`
+        );
+        return;
+      }
+
+      const cards = results.map(s => `
+        <button class="result-card" data-id="${esc(s.id)}" data-q="${esc(query)}">
+          <div class="rc-chapter">${esc(s.chapter)}</div>
+          <div class="rc-title-row">
+            <div class="rc-title">${highlight(s.title, query)}</div>
+            <div class="rc-page">${pageStr(s)}</div>
+          </div>
+          <div class="rc-summary">${highlight(s.summary, query)}</div>
+        </button>
+      `).join('');
+
+      addBotMessage(`
+        <div><b>"${esc(query)}"</b> 검색 결과 <b>${results.length}건</b>이에요.
+        보고 싶은 항목을 눌러주세요 👇</div>
+        <div class="results">${cards}</div>
+      `);
+    };
+
+    const renderDetail = (id, query) => {
+      const s = data.sections.find(x => x.id === id);
+      if (!s) return;
+
+      addUserMessage(s.title);
+
+      const pdfHref = `${encodeURI(data.pdf)}#page=${s.page}`;
+
+      let pageImgs = '';
+      for (let p = s.page; p <= s.pageEnd; p++) {
+        const n = String(p).padStart(3, '0');
+        pageImgs += `<img src="pages/p${n}.jpg" alt="매뉴얼 ${p}페이지" loading="lazy" onerror="this.remove()">`;
+      }
+
+      const html = `
+        <div class="detail-bubble">
+          <div class="d-chapter">${esc(s.chapter)}</div>
+          <div class="d-title">${highlight(s.title, query || '')}</div>
+          <div class="d-meta">
+            <span class="d-page">${pageStr(s)}</span>
+            <a class="d-pdf" href="${pdfHref}" target="_blank" rel="noopener">📄 PDF 원본</a>
+          </div>
+          <div class="d-summary">${highlight(s.summary, query || '')}</div>
+          <div class="d-pages">${pageImgs}</div>
+          <div class="d-body"><pre>${highlight(s.body, query || '')}</pre></div>
+          <div class="d-hint">다른 매뉴얼이 필요하면 아래에 키워드를 입력해 주세요.</div>
+        </div>
+      `;
+
+      // 본문은 패딩이 자체적으로 들어가므로 bubble 패딩을 제거
+      const row = addBotMessage(html, { showSender: false });
+      const bubble = row.querySelector('.bubble');
+      bubble.style.padding = '0';
+      bubble.style.background = '#fff';
+    };
+
+    // ───── 이벤트 ─────
+    chatEl.addEventListener('click', (e) => {
+      const chip = e.target.closest('.chip');
+      if (chip) {
+        const kw = chip.dataset.keyword;
+        if (kw) submitQuery(kw);
+        return;
+      }
+      const card = e.target.closest('.result-card');
+      if (card) {
+        renderDetail(card.dataset.id, card.dataset.q || '');
+      }
+    });
+
+    formEl.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const v = qEl.value.trim();
+      if (!v) return;
+      submitQuery(v);
+    });
+
+    const submitQuery = (v) => {
+      addUserMessage(v);
+      qEl.value = '';
+      // 살짝 지연시켜 자연스러운 대화 느낌
+      setTimeout(() => renderSearch(v), 220);
+    };
+
+    // ───── 초기 환영 메시지 ─────
+    const suggestedKeywords = ['머신', '세제', '행주', '청소주기', '딥클렌징', '그라인더', '디스트리뷰터'];
+
+    const renderWelcome = () => {
+      chatEl.innerHTML = `
+        <div class="date-divider"><span>${(() => {
+          const d = new Date();
+          const days = ['일','월','화','수','목','금','토'];
+          return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 ${days[d.getDay()]}요일`;
+        })()}</span></div>
+      `;
+      addBotMessage(
+        `안녕하세요! <b>사내카페 매뉴얼봇</b>이에요 ☕\n` +
+        `궁금한 키워드를 입력해주시면 관련 매뉴얼을 찾아드릴게요.\n\n` +
+        `아래 추천 키워드를 눌러도 돼요 👇` +
+        `<div class="chips">` +
+          suggestedKeywords.map(k => `<button class="chip" data-keyword="${esc(k)}">${esc(k)}</button>`).join('') +
+        `</div>`
+      );
+    };
+
+    window.resetChat = () => {
+      qEl.value = '';
+      renderWelcome();
+    };
+
+    renderWelcome();
+    qEl.focus();
+  })();
+  </script>
+</body>
+</html>

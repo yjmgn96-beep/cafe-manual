@@ -1,0 +1,8 @@
+# 임시 / 자동 생성 파일
+.tmp_render_pdf.ps1
+*.tmp
+
+# OS 생성 파일
+Thumbs.db
+.DS_Store
+desktop.ini
